@@ -1150,7 +1150,6 @@ IDEVICE_ACTIVATION_API void idevice_activation_response_get_activation_record(id
 {
 	if (!response || !activation_record)
 		return;
-
 	if (response->activation_record) {
 		*activation_record = plist_copy(response->activation_record);
 	} else {
@@ -1341,13 +1340,11 @@ IDEVICE_ACTIVATION_API idevice_activation_error_t idevice_activation_send_reques
 	curl_easy_setopt(handle, CURLOPT_FOLLOWLOCATION, 1L);
 
 	// enable communication debugging
-	if (debug_level > 0) {
-		curl_easy_setopt(handle, CURLOPT_VERBOSE, 1);
-		curl_easy_setopt(handle, CURLOPT_DEBUGFUNCTION, idevice_activation_curl_debug_callback);
-	}
+	curl_easy_setopt(handle, CURLOPT_VERBOSE, 1);
+	curl_easy_setopt(handle, CURLOPT_DEBUGFUNCTION, idevice_activation_curl_debug_callback);
 
 	curl_easy_perform(handle);
-
+	
 	result = idevice_activation_parse_raw_response(tmp_response);
 	if (result != IDEVICE_ACTIVATION_E_SUCCESS) {
 		goto cleanup;

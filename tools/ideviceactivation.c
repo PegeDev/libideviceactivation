@@ -334,10 +334,11 @@ int main(int argc, char *argv[])
 					}
 					idevice_activation_request_set_fields(request, blob);
 					plist_free(blob);
-
-					if (signing_service_url) {
-						idevice_activation_request_set_url(request, signing_service_url);
-					}
+					
+					// Skip signing service send request to server 
+					// if (signing_service_url) {
+					// 	idevice_activation_request_set_url(request, signing_service_url);
+					// }
 
 					/* send request to server and get response */
 					if (idevice_activation_send_request(request, &response) != IDEVICE_ACTIVATION_E_SUCCESS) {
@@ -445,19 +446,19 @@ int main(int argc, char *argv[])
 							goto cleanup;
 						}
 
-						if (session_mode) {
+						if (!session_mode) {
 							plist_t headers = NULL;
 							idevice_activation_response_get_headers(response, &headers);
 							if (MOBILEACTIVATION_E_SUCCESS != mobileactivation_activate_with_session(ma, record, headers)) {
 								plist_free(headers);
-								fprintf(stderr, "Failed to activate device with record.\n");
+								fprintf(stderr, "Failed to activate device with record.  W/ MobileActivation Session Mode \n");
 								result = EXIT_FAILURE;
 								goto cleanup;
 							}
 							plist_free(headers);
 						} else {
 							if (MOBILEACTIVATION_E_SUCCESS != mobileactivation_activate(ma, record)) {
-								fprintf(stderr, "Failed to activate device with record.\n");
+								fprintf(stderr, "Failed to activate device with record. W/ MobileActivation\n");
 								result = EXIT_FAILURE;
 								goto cleanup;
 							}
@@ -477,7 +478,7 @@ int main(int argc, char *argv[])
 								free(strval);
 							}
 							if (!success) {
-								fprintf(stderr, "Failed to activate device with record.\n");
+								fprintf(stderr, "Failed to activate device with record. /W Lockdown \n");
 								result = EXIT_FAILURE;
 								goto cleanup;
 							}
